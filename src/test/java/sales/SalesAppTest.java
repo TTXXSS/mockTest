@@ -9,6 +9,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -55,10 +56,17 @@ public class SalesAppTest {
 		verify(ecmService,times(1)).uploadDocument(report.toXml());
 	}
 
-//	@Test
-//	public void testGetSalesReportData_givenSaleAfterToday_thenReturnNull(){
-//		Calendar c = Calendar.getInstance();
-//		Sales sales = mock(Sales.class);
-//		when(sales.getEffectiveFrom()).thenReturn(new Date());
-//	}
+	@Test
+	public void should_return_headers_when_call_get_header_given_true(){
+		SalesApp spySalesApp = spy(new SalesApp());
+		List<String> headers = new ArrayList<>();
+        headers = Arrays.asList("Sales ID", "Sales Name", "Activity", "Time");
+
+		List<String> getHeaders = spySalesApp.getHeader(true);
+	    assertEquals(getHeaders,headers);
+	}
+
+
+
+
 }
