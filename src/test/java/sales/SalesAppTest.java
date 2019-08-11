@@ -46,7 +46,14 @@ public class SalesAppTest {
 		assertSame(sales1,sales);
 	}
 
+	@Test
+	public void testUpLoad_givenReport_thenUploadDocument(){
+		SalesActivityReport report = mock(SalesActivityReport.class);
+		when(report.toXml()).thenReturn("100");
 
+		injectSalesApp.upLoad(report);
+		verify(ecmService,times(1)).uploadDocument(report.toXml());
+	}
 
 //	@Test
 //	public void testGetSalesReportData_givenSaleAfterToday_thenReturnNull(){
