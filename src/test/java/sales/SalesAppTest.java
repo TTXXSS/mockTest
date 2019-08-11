@@ -23,13 +23,27 @@ public class SalesAppTest {
 	EcmService ecmService;
 	@InjectMocks
 	SalesApp injectSalesApp = new SalesApp();
+
 	@Test
-	public void testGenerateReport() {
-		
-		SalesApp salesApp = new SalesApp();
+	public void testGenerateReport_givenRightSalesId_thenGenerateReport() {
+		SalesApp salesApp = spy(new SalesApp());
+		SalesReportDao salesReportDao = mock(SalesReportDao.class);
+		Sales sales = new Sales();
+		List<String> header = new ArrayList<>();
+        List<SalesReportData> reportDataList = new ArrayList<>();
+        when(salesDao.getReportData(sales)).thenReturn(reportDataList);
+        doReturn(sales).when(salesApp).getSalesBySalesId(anyString());
+        doReturn(header).when(salesApp).getHeader(anyBoolean());
+        doReturn(true).when(salesApp).isBetweenEffectiveDay(sales);
+		doReturn(new SalesActivityReport()).when(salesApp).generateReport(header,reportDataList);
+
+		salesApp.generateSalesActivityReport("111",true,salesReportDao);
+		verify(salesApp,times(1)).generateReport(header,reportDataList);
+		//SalesApp salesApp = new SalesApp();
 		//salesApp.generateSalesActivityReport("DUMMY", 1000, false, false);
 		
 	}
+
 	@Test
 	public void should_return_null_sales_when_call_get_sales_by_sales_id_with_given_a_null_sales_id_(){
 		//Sales sales = new Sales();
@@ -78,20 +92,42 @@ public class SalesAppTest {
 
     @Test
     public void testGetSalesReportData_givenNotBetweenEffectiveDay_thenReturnFalse(){
-        Calendar calendar1 = Calendar.getInstance();
-        calendar1.set(Calendar.DATE,-1);
-        Calendar calendar2 = Calendar.getInstance();
-        calendar2.set(Calendar.DATE,+1);
+        Calendar beforeToday = Calendar.getInstance();
+        beforeToday.set(Calendar.DATE,+1);
+        Calendar afterToday = Calendar.getInstance();
+        afterToday.set(Calendar.DATE,-1);
        // System.out.println(calendar1.getTime());
         Sales sales = mock(Sales.class);
         SalesReportDao salesReportDao = mock(SalesReportDao.class);
-        when(sales.getEffectiveFrom()).thenReturn(calendar1.getTime());
-        when(sales.getEffectiveTo()).thenReturn(calendar2.getTime());
+        when(sales.getEffectiveFrom()).thenReturn(beforeToday.getTime());
+        when(sales.getEffectiveTo()).thenReturn(afterToday.getTime());
 
         SalesApp salesApp = new SalesApp();
-        boolean isEffectiveDay = salesApp.isBetweenEffectiveDay(sales,salesReportDao);
+        boolean isEffectiveDay = salesApp.isBetweenEffectiveDay(sales);
         assertEquals(isEffectiveDay,false);
+    }
 
+    @Test
+    public void testGetSalesReportData_givenBetweenEffectiveDay_thenReturnTrue(){
+        Calendar beforeToday = Calendar.getInstance();
+        beforeToday.set(Calendar.DAY_OF_MONTH,-1);
+
+        Calendar afterToday = Calendar.getInstance();
+        afterToday.set(Calendar.DAY_OF_MONTH,+12);
+
+        System.out.println(beforeToday.getTime());
+        System.out.println(new Date());
+        System.out.println(afterToday.getTime());
+
+        // System.out.println(calendar1.getTime());
+        Sales sales = mock(Sales.class);
+
+        when(sales.getEffectiveFrom()).thenReturn(beforeToday.getTime());
+        when(sales.getEffectiveTo()).thenReturn(afterToday.getTime());
+
+        SalesApp salesApp = new SalesApp();
+        boolean isEffectiveDay = salesApp.isBetweenEffectiveDay(sales);
+        assertEquals(isEffectiveDay,true);
     }
 
 }
