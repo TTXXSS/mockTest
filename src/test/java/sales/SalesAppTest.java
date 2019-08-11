@@ -76,6 +76,22 @@ public class SalesAppTest {
         assertEquals(getHeaders,headers);
     }
 
+    @Test
+    public void testGetSalesReportData_givenNotBetweenEffectiveDay_thenReturnFalse(){
+        Calendar calendar1 = Calendar.getInstance();
+        calendar1.set(Calendar.DATE,-1);
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.set(Calendar.DATE,+1);
+       // System.out.println(calendar1.getTime());
+        Sales sales = mock(Sales.class);
+        SalesReportDao salesReportDao = mock(SalesReportDao.class);
+        when(sales.getEffectiveFrom()).thenReturn(calendar1.getTime());
+        when(sales.getEffectiveTo()).thenReturn(calendar2.getTime());
 
+        SalesApp salesApp = new SalesApp();
+        boolean isEffectiveDay = salesApp.isBetweenEffectiveDay(sales,salesReportDao);
+        assertEquals(isEffectiveDay,false);
+
+    }
 
 }
