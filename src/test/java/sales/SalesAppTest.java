@@ -66,6 +66,15 @@ public class SalesAppTest {
 	    assertEquals(getHeaders,headers);
 	}
 
+    @Test
+    public void should_return_headers_when_call_get_header_given_false(){
+        SalesApp spySalesApp = spy(new SalesApp());
+        List<String> headers = new ArrayList<>();
+        headers = Arrays.asList("Sales ID", "Sales Name", "Activity", "Local Time");
+
+        List<String> getHeaders = spySalesApp.getHeader(false);
+        assertEquals(getHeaders,headers);
+    }
 
 
 
