@@ -113,7 +113,7 @@ public class SalesAppTest {
         beforeToday.set(Calendar.DAY_OF_MONTH,-1);
 
         Calendar afterToday = Calendar.getInstance();
-        afterToday.set(Calendar.DAY_OF_MONTH,+12);
+        afterToday.set(Calendar.DAY_OF_MONTH,30);
 
         System.out.println(beforeToday.getTime());
         System.out.println(new Date());

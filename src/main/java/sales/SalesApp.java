@@ -8,50 +8,20 @@ import java.util.List;
 public class SalesApp {
     SalesDao salesDao;
 	EcmService ecmService;
-	public void generateSalesActivityReport() {
+	public void generateSalesActivityReport(String salesId,boolean isNatTrade,SalesReportDao salesReportDao) {
 
-//		SalesDao salesDao = new SalesDao();
-//		SalesReportDao salesReportDao = new SalesReportDao();
-//		List<String> headers = null;
-//
-//		List<SalesReportData> filteredReportDataList = new ArrayList<SalesReportData>();
+		List<SalesReportData> reportDataList = null;
+		Sales sales = getSalesBySalesId(salesId);
+        boolean isBetweenEffectiveDay = isBetweenEffectiveDay(sales);
+		if(isBetweenEffectiveDay)
+		reportDataList = salesReportDao.getReportData(sales);
+		else
+			return;
+		List<String> header = getHeader(isNatTrade);
+		generateReport(header,reportDataList);
 
 
-//		Date today = new Date();
-//		if (today.after(sales.getEffectiveTo())
-//				|| today.before(sales.getEffectiveFrom())){
-//			return;
-//		}
-//
-//		List<SalesReportData> reportDataList = salesReportDao.getReportData(sales);
 
-//		for (SalesReportData data : reportDataList) {
-//			if ("SalesActivity".equalsIgnoreCase(data.getType())) {
-//				if (data.isConfidential()) {
-//					if (isSupervisor) {
-//						filteredReportDataList.add(data);
-//					}
-//				}else {
-//					filteredReportDataList.add(data);
-//				}
-//			}
-//		}
-
-//		List<SalesReportData> tempList = new ArrayList<SalesReportData>();
-//		for (int i=0; i < reportDataList.size() || i < maxRow; i++) {
-//			tempList.add(reportDataList.get(i));
-//		}
-//		filteredReportDataList = tempList;
-
-//		if (isNatTrade) {
-//			headers = Arrays.asList("Sales ID", "Sales Name", "Activity", "Time");
-//		} else {
-//			headers = Arrays.asList("Sales ID", "Sales Name", "Activity", "Local Time");
-//		}
-//
-//		SalesActivityReport report = this.generateReport(headers, reportDataList);
-
-		
 	}
     public Sales getSalesBySalesId(String salesId){
 		if (salesId == null) {
@@ -61,7 +31,7 @@ public class SalesApp {
 		return sales;
 	}
 
-	public boolean isBetweenEffectiveDay(Sales sales,SalesReportDao salesReportDao){
+	public boolean isBetweenEffectiveDay(Sales sales){
 		//SalesReportDao salesReportDao = new SalesReportDao();
 		Date today = new Date();
 		if (today.after(sales.getEffectiveTo())
@@ -87,7 +57,7 @@ public class SalesApp {
 		ecmService.uploadDocument(report.toXml());
 	}
 
-	private SalesActivityReport generateReport(List<String> headers, List<SalesReportData> reportDataList) {
+	public SalesActivityReport generateReport(List<String> headers, List<SalesReportData> reportDataList) {
 		// TODO Auto-generated method stub
 		return null;
 	}
